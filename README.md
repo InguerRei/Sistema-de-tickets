@@ -1,3 +1,3 @@
 # Sistema-de-tickets
-proteto de sistema de tickets de TI
+projeto de sistema de tickets de TI
 
