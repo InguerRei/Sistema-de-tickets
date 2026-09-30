@@ -1,0 +1,18 @@
+/* Estilos globais do site.
+   Aqui ficam regras que afetam todo o projeto em geral. */
+   
+body{
+    background: linear-gradient(135deg, #0f172a, #111827);
+    color: var(--text-light);
+    font-family: var(--font-main);
+}
+
+a{
+    color: inherit;
+    text-decoration: none;
+}
+
+img{
+    max-width: 100%;
+    display: block;
+}

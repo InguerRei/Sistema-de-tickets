@@ -1,0 +1,16 @@
+/* Variáveis globais do projeto.
+   Aqui ficam as cores, fontes e espaçamentos usados em vários componentes.
+   Assim, se quiser trocar a cor principal, muda só uma vez. */
+
+:root {
+  --bg-dark: #0f172a;          /* fundo principal escuro */
+  --bg-panel: #111827;         /* fundo do card/login */
+  --primary: #4f46e5;          /* cor principal do botão */
+  --primary-hover: #4338ca;    /* tom mais escuro ao passar o mouse */
+  --text-light: #f8fafc;        /* texto claro */
+  --text-muted: #94a3b8;       /* texto secundário */
+  --border: rgba(148, 163, 184, 0.25); /* borda sutil */
+  --shadow: 0 20px 45px rgba(15, 23, 42, 0.35); /* sombra do painel */
+  --radius: 18px;               /* bordas arredondadas */
+  --font-main: "Inter", "Segoe UI", sans-serif; /* fonte principal */
+}

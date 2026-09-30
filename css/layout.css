@@ -1,0 +1,15 @@
+/* Layout e estrutura da página.
+   Este arquivo organiza a página e centraliza o card de login na tela. */
+
+.page {
+  min-height: 100vh;      /* altura total da tela */
+  display: flex;           /* ativa flexbox */
+  align-items: center;     /* centraliza verticalmente */
+  justify-content: center;  /* centraliza horizontalmente */
+  padding: 24px;           /* espaço para celular */
+}
+
+.login-shell {
+  width: 100%;
+  max-width: 420px;        /* largura máxima do painel */
+}
