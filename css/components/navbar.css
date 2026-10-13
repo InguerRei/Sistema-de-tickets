@@ -1,0 +1,77 @@
+/* Barra superior do dashboard */
+.topbar {
+    background: rgba(15, 23, 42, 0.96);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    z-index: 10;
+}
+
+/* Container para organizar o cabeçalho */
+.topbar_container{
+    width: min(1180px,calc(100% - 40px));
+    min-height: 76px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+/* Identificação da marca */
+.topbar_brand{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-light);
+    text-decoration: none;
+}
+
+.topbar_logo {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.topbar_name{
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+/* Navegação */
+.topbar_nav{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.topbar_link:hover,
+.topbar_link:active{
+    color: var(--text-light);
+    background: rgba(79, 70, 229, 0.2);
+}
+
+/* Ações do usuário */
+.topbar_actions{
+    display:flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.topbar_user{
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+.topbar_button {
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 9px 15px;
+    background: transparent;
+    color: var(--text-light);
+    cursor: pointer;
+    font-weight: 600;
+}
+/* Efeito ao passar o mouse no botão */
+.topbar_button:hover{
+    background: rgba(255, 255, 255, 0.08);
+}

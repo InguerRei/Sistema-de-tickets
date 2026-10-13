@@ -28,3 +28,11 @@
   flex-direction: column;
   gap: 18px;
 }
+
+.login-logo {
+    display: block;
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    margin: 0 auto 16px;
+}
