@@ -61,6 +61,44 @@ app.post('/login', (req, res) => {
   });
 });
 
+app.get('/tickets', (req, res) => {
+  const sql = 'SELECT * FROM ticktes ORDER BY created_at DESC';
+
+  db.all(sql, [], (err, rows) => {
+    if(err){
+      console.error(err);
+      return res.status(500).json({mesage: 'Erro ao buscar tickets' })
+    }
+
+    return res.json(rows);
+  });
+});
+
+app.post('/tickets', (req, res) => {
+  const { title, description, category, user_id } = req.body;
+
+  if (!title || !description || !category) {
+    return res.status(400).json({ message: 'Título, descrição e categoria são obrigatórios.'});
+  }
+
+  const sql = `
+  INSERT INTO tickets (title, description, category, user_id, status)
+    VALUES (?, ?, ?, ?, 'aberto')
+    `;
+
+    db.run(sql, [title, description, category, user_id || null], function (err){
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'erro ao criar ticket' });
+      }
+
+      return res.status(201).json({
+        message: 'Ticket criado com sucesso',
+        id: this.lastID
+      });
+    });
+});
+
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);
 });
