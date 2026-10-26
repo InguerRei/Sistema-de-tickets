@@ -1,102 +1,142 @@
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
+const sqlite3 = requere('sqlite3').verbose();
 const path = require('path');
 
 const app = express();
 const port = 3000;
 
+// Permite requisições do navegador durante o desenvolvimento local.
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept'
+  );
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 
   if (req.method === 'OPTIONS') {
     return res.sendStatus(200);
   }
-
-  next();
+next();
 });
 
+//Permite ler JSON Enviado pelo frontend y servir os archivos do projeto.
 app.use(express.json());
 app.use(express.static(__dirname));
 
 const dbPath = path.join(__dirname, 'database', 'sistema_tickets.db');
-const db = new sqlite3.Database(dbPath, (err) => {
-    if (err) {
-        console.error('erro ao conectar no banco:', err.message);
-        return;
-    }
-    console.log('conectado ao SQLite3');
-});
-
-app.post('/login', (req, res) => {
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    return res.status(400).json({ message: 'usuario e senha sao obrigatorios!.' });
+const db = new sqlite3.Database(dbPath, err=> {
+  if(err){
+    console.error('Erro ao conectar no banco', err.message);
+    return;
   }
 
-  const sql = 'SELECT * FROM usuarios WHERE username = ? AND password = ?';
+  //o SQlite precisa disso para verificar chaves estrangeiras
+  db.run('ORAGMA foreing_key = ON');
+  console.log('Conectado ao SQLite3');
+});
 
-  db.get(sql, [username, password], (err, row) => {
-    if (err) {
+//verifica as credenciais na tabela de usuarios
+app.post('/login', (req, res) => {
+  const {username, password} = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({
+      message: 'Usuarios e senha son obligatorios'
+    });
+  }
+
+  const sql = `
+  SELECT id, username, email, role
+  FROM usuarios
+  WHERE username = ? password = ?
+  `;
+
+  db.get(sql, [username, password], (err, user) => {
+    if(err){
       console.error(err);
-      return res.status(500).json({ message: 'error ao consultar o banco' });
+      return res.status(500).json({
+        message: 'Erro ao consultar o banco.'
+      });
     }
 
-    if (!row) {
-      return res.status(401).json({ message: 'credenciais invalidas' });
+    if (!user){
+      return res.status(401).json({
+        message: 'Credenciais invalidas'
+      });
     }
 
     return res.json({
       success: true,
-      message: 'Login realizado.',
-      user: {
-        id: row.id,
-        username: row.username,
-        email: row.email,
-        role: row.role
-      }
+      message: 'Login Realizado.',
+      user
     });
   });
 });
 
+// Busca os chamados para o dashboard.
 app.get('/tickets', (req, res) => {
-  const sql = 'SELECT * FROM ticktes ORDER BY created_at DESC';
+  const sql = `
+    SELECT id, title, description, category, status, user_id, created_at
+    FROM tickets
+    ORDER BY created_at DESC
+  `;
 
   db.all(sql, [], (err, rows) => {
-    if(err){
+    if (err) {
       console.error(err);
-      return res.status(500).json({mesage: 'Erro ao buscar tickets' })
+      return res.status(500).json({
+        message: 'Erro ao buscar chamados.'
+      });
     }
 
     return res.json(rows);
   });
 });
 
+// Recebe os dados do formulário e cria um chamado.
 app.post('/tickets', (req, res) => {
   const { title, description, category, user_id } = req.body;
+  const userId = Number(user_id);
 
-  if (!title || !description || !category) {
-    return res.status(400).json({ message: 'Título, descrição e categoria são obrigatórios.'});
+  if (
+    typeof title !== 'string' || !title.trim() ||
+    typeof description !== 'string' || !description.trim() ||
+    typeof category !== 'string' || !category.trim()
+  ) {
+    return res.status(400).json({
+      message: 'Título, descrição e categoria são obrigatórios.'
+    });
+  }
+
+  if (!Number.isInteger(userId) || userId <= 0) {
+    return res.status(400).json({
+      message: 'É necessário informar um ID de usuário válido.'
+    });
   }
 
   const sql = `
-  INSERT INTO tickets (title, description, category, user_id, status)
+    INSERT INTO tickets (title, description, category, user_id, status)
     VALUES (?, ?, ?, ?, 'aberto')
-    `;
+  `;
 
-    db.run(sql, [title, description, category, user_id || null], function (err){
+  db.run(
+    sql,
+    [title.trim(), description.trim(), category.trim(), userId],
+    function (err) {
       if (err) {
         console.error(err);
-        return res.status(500).json({ message: 'erro ao criar ticket' });
+        return res.status(500).json({
+          message: 'Erro ao criar chamado.'
+        });
       }
 
       return res.status(201).json({
-        message: 'Ticket criado com sucesso',
+        message: 'Chamado criado com sucesso.',
         id: this.lastID
       });
-    });
+    }
+  );
 });
 
 app.listen(port, () => {
